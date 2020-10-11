@@ -3,25 +3,26 @@ version: '3.3'
 services:
     app:
         build: .
+        image: lutim_app
         ports:
             - 8080:8080
         volumes:
             - ./lutim.conf:/home/lutim/lutim.conf:ro
     db:
-        image: postgres:11.2-alpine
+        image: postgres:13-alpine
         environment:
             POSTGRES_PASSWORD: password
             POSTGRES_USER: lutim
             POSTGRES_DB: lutim
     cache:
-        image: memcached:1.5-alpine
+        image: memcached:1.6-alpine
     minion:
-        build: .
+        image: lutim_app
         command: minion
         volumes:
             - ./lutim.conf:/home/lutim/lutim.conf:ro
     minion_db:
-        image: postgres:11.2-alpine
+        image: postgres:13-alpine
         environment:
             POSTGRES_PASSWORD: password
             POSTGRES_USER: lutim_minion

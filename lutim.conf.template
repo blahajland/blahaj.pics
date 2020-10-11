@@ -8,7 +8,7 @@
         # array of IP addresses and ports you want to listen to
         listen => ['http://127.0.0.1:8080'],
         # if you use Lutim behind a reverse proxy like Nginx, you want to set proxy to 1
-        # if you use Lutim directly, let it commented
+        # if you use Lutim directly, leave it commented
         #proxy  => 1,
     },
 
@@ -55,7 +55,7 @@
     #tweet_card_via    => '@foo',
 
     # max image size, in octets
-    # you can write it 10*1024*1024
+    # you can write it as 10*1024*1024
     # optional, default is 10485760
     #max_file_size     => 10485760,
 
@@ -75,7 +75,7 @@
     # optional, default is 0
     #https             => 0,
 
-    # broadcast_message which will displayed on all pages of Lutim (but no in json response)
+    # broadcast_message which will be displayed on all pages of Lutim (but not in json response)
     # optional, no default
     #broadcast_message => 'Maintenance',
 
@@ -132,7 +132,7 @@
     # URL sub-directory in which you want Lutim to be accessible
     # example: you want to have Lutim under https://example.org/lutim/
     # => set prefix to '/lutim' or to '/lutim/', it doesn't matter
-    # optional, defaut is /
+    # optional, default is /
     #prefix            => '/',
 
     # choose what database you want to use
@@ -143,18 +143,18 @@
     # SQLite ONLY - only used if dbtype is set to sqlite
     # define a path to the SQLite database
     # you can define it relative to lutim directory or set an absolute path
-    # remember that it has to be in a directory writable by Lutim user
+    # remember that it has to be in a directory writeable by Lutim user
     # optional, default is lutim.db
     #db_path           => 'lutim.db',
 
     # PostgreSQL ONLY - only used if dbtype is set to postgresql
     # these are the credentials to access the PostgreSQL database
-    # mandatory if you choosed postgresql as dbtype
+    # mandatory if you chose postgresql as dbtype
     #pgdb => {
     #    database => 'lutim',
     #    host     => 'localhost',
     #    #user     => 'DBUSER',
-    #    #pwd      => 'DBPASSWORD'
+    #    #pwd      => 'DBPASSWORD',
     #},
 
     # use Minion instead of directly increase counters
@@ -166,24 +166,24 @@
     #    # valid values are sqlite and postgresql (all lowercase)
     #    # mandatory if Minion is enabled, default is sqlite
     #    dbtype  => 'sqlite',
-    #    # SQLite ONLY - only used if if you choose sqlite as Minion backend, define the path to the minion database
+    #    # SQLite ONLY - only used if you choose sqlite as Minion backend, define the path to the minion database
     #    # you can define it relative to lutim directory or set an absolute path
-    #    # remember that it has to be in a directory writable by Lutim user
+    #    # remember that it has to be in a directory writeable by Lutim user
     #    # optional, default is minion.db
     #    db_path => 'minion.db',
     #    # PostgreSQL ONLY - only used if you choose postgresql as Minion backend
     #    # these are the credentials to access the Minion's PostgreSQL database
-    #    # mandatory if you choosed postgresql as Minion backend, no default
+    #    # mandatory if you chose postgresql as Minion backend, no default
     #    pgdb => {
     #        database => 'lutim_minion',
     #        host     => 'localhost',
     #        #user     => 'DBUSER',
-    #        #pwd      => 'DBPASSWORD'
-    #    }
+    #        #pwd      => 'DBPASSWORD',
+    #    },
     #},
 
     # set `ldap` if you want that only authenticated users can shorten URLs
-    # please note that everybody can still use shortend URLs
+    # please note that everybody can still use shortened URLs
     # optional, no default
     #ldap => {
     #    uri         => 'ldaps://ldap.example.org',                 # server URI
@@ -201,7 +201,7 @@
     #htpasswd => 'lutim.passwd',
 
     # if you've set ldap or htpasswd above, the session will last `session_duration` seconds before
-    # the user needs to reauthenticate
+    # the user needs to re-authenticate
     # optional, default is 3600
     #session_duration => 3600,
 
@@ -211,24 +211,24 @@
     #disable_img_stats => 0,
 
     # define the height of the thumbnails generated at users' will
-    # this is not the height of the thumbnails send after upload,
-    # we're talking about thumbnails generated when someone asked for
+    # this is not the height of the thumbnails sent after upload,
+    # we're talking about thumbnails generated when someone asks for them
     # https://example.org/lutim/tesrinp?thumb
-    # this works only if you have ImageMagick
+    # this only works if you have ImageMagick installed
     # optional, default is 100 (pixels)
     #thumbnail_size => 100,
 
     # maximum number of files that can be downloaded as a single zip archive
-    # if too many files are asked, it results a timeout, so Lutim split the zip URL
-    # in multiple URLs, each with max_file_size images.
-    # timeout behavior depends heavily on your server ressources (CPU) and if images
+    # if too many files are requested, it results in a timeout, so Lutim splits the zip URL
+    # into multiple URLs, each with max_file_size images.
+    # timeout behaviour depends heavily on your server resources (CPU) and if images
     # are encrypted
     # optional, default is 15
     #max_files_in_zip => 15,
 
     # maximum size (in MB) of memory allowed for the image cache
     # Lutim has a built-in memory-based image cache to accelerate responses to often-viewed images.
-    # This setting makes the cache remove oldest viewed image if the cache size is over it.
+    # This setting makes the cache remove oldest viewed images if the cache size is over it.
     # WARNING: a cache is created for each hypnotoad worker, which by default is twice the number of
     # CPUs you have. See http://mojolicious.org/perldoc/Mojo/Server/Hypnotoad#workers for details
     # So, if you have 4 workers and set cache_max_size to 100, the real maximum size of RAM used for
@@ -237,12 +237,12 @@
     # optional, default is 0
     #cache_max_size => 0,
 
-    # array of memcached servers to cache URL in order to accelerate responses to often-viewed URL.
+    # array of memcached servers to cache URL in order to accelerate responses to often-viewed URLs.
     # If set to [], the use of memcached is disabled.
     # If you use memcached, the internal cache (see cache_max_size option above) will not be used.
-    # Please see https://framagit.org/luc/lutim/wikis/memcached to know how to configure your memcached
-    # servers.
-    # exemple of valid value: ['127.0.0.1:11211']
+    # To learn how to configure your memcached servers, see:
+    # - https://framagit.org/fiat-tux/hat-softwares/lutim/-/wikis/memcached
+    # example of valid value: ['127.0.0.1:11211']
     # optional, default is []
     #memcached_servers => [],
 
@@ -251,7 +251,7 @@
     # optional, default is 0
     #quiet_logs => 0,
 
-    # Content-Security-Policy header that will be sent by Lstu
+    # Content-Security-Policy header that will be sent by Lutim
     # Set to '' to disable CSP header
     # https://content-security-policy.com/ provides a good documentation about CSP.
     # https://report-uri.com/home/generate provides a tool to generate a CSP header.
@@ -261,7 +261,7 @@
     # the default value is good for `default` theme
     #csp => "base-uri 'self'; connect-src 'self'; default-src 'none'; font-src 'self'; form-action 'self'; img-src 'self' data:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
 
-    # X-Frame-Options header that will be sent by Lstu
+    # X-Frame-Options header that will be sent by Lutim
     # Valid values are: 'DENY', 'SAMEORIGIN', 'ALLOW-FROM https://example.com/'
     # Set to '' to disable X-Frame-Options header
     # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
@@ -270,13 +270,13 @@
     # optional, default is 'DENY'
     #x_frame_options => 'DENY',
 
-    # X-Content-Type-Options that will be sent by Lstu
+    # X-Content-Type-Options that will be sent by Lutim
     # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
     # Set to '' to disable X-Content-Type-Options header
     # optional, default is 'nosniff'
     #x_content_type_options => 'nosniff',
 
-    # X-XSS-Protection that will be sent by Lstu
+    # X-XSS-Protection that will be sent by Lutim
     # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
     # Set to '' to disable X-XSS-Protection header
     # optional, default is '1; mode=block'
@@ -290,28 +290,28 @@
     # Lutim cron jobs settings
     ##########################
 
-    # number of days shown in /stats page (used with script/lutim cron stats)
+    # number of days shown in /stats page (used with `script/lutim cron stats`)
     # optional, default is 365
     #stats_day_num     => 365,
 
     # number of days senders' IP addresses are kept in database
-    # after that delay, they will be deleted from database (used with script/lutim cron cleanbdd)
+    # after that delay, they will be deleted from database (used with `script/lutim cron cleanbdd`)
     # optional, default is 365
     #keep_ip_during    => 365,
 
     # max size of the files directory, in octets
-    # used by script/lutim cron watch to trigger an action
+    # used by `script/lutim cron watch` to trigger an action
     # optional, no default
     #max_total_size    => 10*1024*1024*1024,
 
-    # default action when files directory is over max_total_size (used with script/lutim cron watch)
+    # default action when files directory is over max_total_size (used with `script/lutim cron watch`)
     # valid values are 'warn', 'stop-upload' and 'delete'
     # please, see readme
     # optional, default is 'warn'
     #policy_when_full  => 'warn',
 
-    # images which are not viewed since delete_no_longer_viewed_files days will be deleted by the cron cleanfiles task
+    # images which are not viewed since delete_no_longer_viewed_files days will be deleted (used with `script/lutim cron cleanfiles`)
     # if delete_no_longer_viewed_files is not set, the no longer viewed files will NOT be deleted
     # optional, no default
-    #delete_no_longer_viewed_files => 90
+    #delete_no_longer_viewed_files => 90,
 };

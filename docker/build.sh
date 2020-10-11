@@ -2,15 +2,12 @@
 
 set -eu
 
-apk update
-apk add perl libpq perl-crypt-rijndael perl-io-socket-ssl perl-net-ssleay su-exec shared-mime-info libressl
-sh $(dirname $0)/install-dev-env.sh
-
-sh $(dirname $0)/install-imagemagick.sh
+sh $(dirname $0)/install.sh
+sh $(dirname $0)/install-dev.sh
 
 cpan notest Carton Config::FromHash
 carton install --without test
 
-# Remove dev env
+# Remove dev packages
 apk del .build-deps
 rm -rf /var/cache/apk/* /root/.cpan*
