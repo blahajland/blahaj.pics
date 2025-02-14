@@ -30,9 +30,10 @@ nav .container {
 }
 
 .hennypenny {
-    font-family: 'Henny_Penny', cursive;
+    font-family: Inter, sans-serif;
     font-size: 42px;
 }
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 .logo {
     margin-right: 10px;

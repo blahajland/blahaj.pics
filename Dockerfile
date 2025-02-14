@@ -4,11 +4,11 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION
 LABEL org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.name="Lets Upload That Image" \
-      org.label-schema.url="https://lutim.fiat-tux.fr/" \
+      org.label-schema.name="blahaj.pics" \
+      org.label-schema.url="https://blahaj.pics" \
       org.label-schema.vcs-ref=$VCS_REF \
-      org.label-schema.vcs-url="https://framagit.org/fiat-tux/hat-softwares/lutim" \
-      org.label-schema.vendor="Luc Didry" \
+      org.label-schema.vcs-url="https://github.com/blahajland/blahaj.pics" \
+      org.label-schema.vendor="blahaj.land" \
       org.label-schema.version=$VERSION \
       org.label-schema.schema-version="1.0"
 

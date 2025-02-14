@@ -1,20 +1,21 @@
 
 /* Yeched'mad CSS */
 :root {
-    --theme-blue: #0060DF;
-    --theme-blue-hover: #45A1FF;
+    --theme-blue: #6FADE6;
+    --theme-blue-hover: #339cff;
 }
 
 body {
-    position: relative;
-    background-color: #EEEEEE;
-
+    background-color:rgba(255, 255, 255, 0.6600000262260437);
+    border-radius:36px;
+    padding:24px;
+    display:flex;
+    flex-wrap:nowrap;
+    position:relative;
     background-size: cover;
-
     min-height: 100vh;
-    display: flex;
     flex-direction: column;
-}
+    }
 
 body::before,
 body::after {
