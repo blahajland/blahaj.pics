@@ -1,0 +1,194 @@
+name: CI
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+
+env:
+  POSTGRES_DB: lutim_db
+  POSTGRES_USER: lutim
+  POSTGRES_PASSWORD: lutim_pwd
+
+jobs:
+  podcheck:
+    runs-on: ubuntu-latest
+    container: hatsoftwares/lutim-test-ci:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run podcheck
+        run: make podcheck
+
+  carton:
+    runs-on: ubuntu-latest
+    container: hatsoftwares/lutim-test-ci:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          cpanm -l local Devel::Cover~1.29
+          carton install --deployment --without=sqlite --without=postgresql --without=minion --without=cache --without=memcached
+      - name: Upload carton artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: carton-deps
+          path: local/
+
+  carton_sqlite:
+    needs: carton
+    runs-on: ubuntu-latest
+    container: hatsoftwares/lutim-test-ci:latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: carton-deps
+          path: local/
+      - name: Install SQLite dependencies
+        run: carton install --deployment --without=postgresql --without=minion --without=cache --without=memcached
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: sqlite-deps
+          path: local/
+
+  carton_postgresql:
+    needs: carton
+    runs-on: ubuntu-latest
+    container: hatsoftwares/lutim-test-ci:latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: carton-deps
+          path: local/
+      - name: Install PostgreSQL dependencies
+        run: carton install --deployment --without=sqlite --without=minion --without=cache --without=memcached
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: pg-deps
+          path: local/
+
+  sqlite_tests:
+    needs: carton_sqlite
+    runs-on: ubuntu-latest
+    container: hatsoftwares/lutim-test-ci:latest
+    strategy:
+      matrix:
+        config: [sqlite1, sqlite2, sqlite3]
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: sqlite-deps
+          path: local/
+      - name: Setup for ${{ matrix.config }}
+        run: |
+          rm -f *.db
+          if [ "${{ matrix.config }}" = "sqlite3" ]; then
+            carton install --deployment --without=cache --without=memcached
+            export PGPASSWORD=${{ env.POSTGRES_PASSWORD }}
+            echo 'CREATE DATABASE lutim_minion WITH OWNER lutim;' | psql -h postgres -U ${{ env.POSTGRES_USER }} ${{ env.POSTGRES_DB }}
+          elif [ "${{ matrix.config }}" = "sqlite2" ]; then
+            carton install --deployment --without=postgresql --without=cache --without=memcached
+          else
+            carton install --deployment --without=postgresql --without=minion --without=cache --without=memcached
+          fi
+      - name: Run tests
+        run: |
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make test
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make watch
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make cleanbdd
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make cleanfiles
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make stats
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make test-junit-output
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.config }}
+          path: |
+            tap.xml
+            cover_db/
+
+  postgresql_tests:
+    needs: carton_postgresql
+    runs-on: ubuntu-latest
+    container: hatsoftwares/lutim-test-ci:latest
+    strategy:
+      matrix:
+        config: [postgresql1, postgresql2, postgresql3]
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: pg-deps
+          path: local/
+      - name: Setup for ${{ matrix.config }}
+        run: |
+          rm -f *.db
+          if [ "${{ matrix.config }}" = "postgresql3" ]; then
+            carton install --deployment --without=sqlite --without=cache --without=memcached
+            export PGPASSWORD=${{ env.POSTGRES_PASSWORD }}
+            echo 'CREATE DATABASE lutim_minion WITH OWNER lutim;' | psql -h postgres -U ${{ env.POSTGRES_USER }} ${{ env.POSTGRES_DB }}
+          elif [ "${{ matrix.config }}" = "postgresql2" ]; then
+            carton install --deployment --without=cache --without=memcached
+          else
+            carton install --deployment --without=sqlite --without=minion --without=cache --without=memcached
+          fi
+      - name: Run tests
+        run: |
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make test
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make watch
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make cleanbdd
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make cleanfiles
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make stats
+          MOJO_CONFIG=t/${{ matrix.config }}.conf make test-junit-output
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.config }}
+          path: |
+            tap.xml
+            cover_db/
+
+  coverage:
+    needs: [sqlite_tests, postgresql_tests]
+    runs-on: ubuntu-latest
+    container: hatsoftwares/lutim-test-ci:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      - name: Generate coverage report
+        run: make cover
+      - name: Upload coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: cover_db/
