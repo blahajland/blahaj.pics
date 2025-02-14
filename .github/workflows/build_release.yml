@@ -30,7 +30,7 @@ jobs:
           cpanm -l local Devel::Cover~1.29
           carton install --deployment --without=sqlite --without=postgresql --without=minion --without=cache --without=memcached
       - name: Upload carton artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: carton-deps
           path: local/
@@ -41,14 +41,14 @@ jobs:
     container: hatsoftwares/lutim-test-ci:latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: carton-deps
           path: local/
       - name: Install SQLite dependencies
         run: carton install --deployment --without=postgresql --without=minion --without=cache --without=memcached
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sqlite-deps
           path: local/
@@ -59,14 +59,14 @@ jobs:
     container: hatsoftwares/lutim-test-ci:latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v
         with:
           name: carton-deps
           path: local/
       - name: Install PostgreSQL dependencies
         run: carton install --deployment --without=sqlite --without=minion --without=cache --without=memcached
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pg-deps
           path: local/
@@ -92,7 +92,7 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: sqlite-deps
           path: local/
@@ -117,7 +117,7 @@ jobs:
           MOJO_CONFIG=t/${{ matrix.config }}.conf make stats
           MOJO_CONFIG=t/${{ matrix.config }}.conf make test-junit-output
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.config }}
           path: |
@@ -145,7 +145,7 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: pg-deps
           path: local/
@@ -170,7 +170,7 @@ jobs:
           MOJO_CONFIG=t/${{ matrix.config }}.conf make stats
           MOJO_CONFIG=t/${{ matrix.config }}.conf make test-junit-output
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.config }}
           path: |
@@ -184,11 +184,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Generate coverage report
         run: make cover
       - name: Upload coverage results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: cover_db/
