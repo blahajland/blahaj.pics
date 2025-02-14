@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     container: hatsoftwares/lutim-test-ci:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run podcheck
         run: make podcheck
 
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     container: hatsoftwares/lutim-test-ci:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           cpanm -l local Devel::Cover~1.29
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     container: hatsoftwares/lutim-test-ci:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v3
         with:
           name: carton-deps
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     container: hatsoftwares/lutim-test-ci:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v3
         with:
           name: carton-deps
@@ -91,7 +91,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v3
         with:
           name: sqlite-deps
@@ -144,7 +144,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v3
         with:
           name: pg-deps
@@ -182,7 +182,7 @@ jobs:
     runs-on: ubuntu-latest
     container: hatsoftwares/lutim-test-ci:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download all artifacts
         uses: actions/download-artifact@v3
       - name: Generate coverage report
